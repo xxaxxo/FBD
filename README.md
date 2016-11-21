@@ -15,5 +15,9 @@ FBD_URL=http://api.football-data.org/v1/
 All the responses are returned as laravel collections for easier management post request
 
 
+```
+composer require xxaxxo/fbd
+```
+
 
 
