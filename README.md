@@ -12,7 +12,7 @@ FBD_TOKEN=
 FBD_URL=http://api.football-data.org/v1/
 ```
 
-All the responses are returned as laravel collections for easier management post request
+All the responses are returned as laravel collections for easier management after the request
 
 
 ```
@@ -20,4 +20,8 @@ composer require xxaxxo/fbd dev-master
 ```
 
 
-
+Add
+```
+use xxaxxo\fbd\Services\FootballData\FootballData;
+```
+in your controller after getting the package and feed it to the model
