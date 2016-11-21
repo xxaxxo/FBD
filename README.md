@@ -16,7 +16,7 @@ All the responses are returned as laravel collections for easier management post
 
 
 ```
-composer require xxaxxo/fbd
+composer require xxaxxo/fbd dev-master
 ```
 
 
