@@ -1,0 +1,23 @@
+{
+  "name": "xxaxxo/fbd",
+  "description": "Wrapper for football-data.org for Laravel 5.*",
+  "keywords": ["football", "api", "soccer"],
+  "authors": [
+    {
+      "name": "Michael Kumar",
+      "email": "m.kumar@abv.bg"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.9",
+    "laravel/framework": "5.1.*",
+    "guzzlehttp/guzzle": "^6.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "xxaxxo\\fbd\\": "src/"
+    }
+  },
+  "minimum-stability": "dev",
+  "license": "MIT"
+}

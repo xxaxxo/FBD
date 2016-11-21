@@ -5,7 +5,7 @@
  * Time: 14:21
  */
 
-namespace App\Services\FootballData;
+namespace xxaxxo\fbd\Services\FootballData;
 
 class FootballDataException extends \LogicException
 {

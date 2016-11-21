@@ -5,10 +5,10 @@
  * Time: 14:07
  */
 
-namespace App\Services\FootballData;
+namespace xxaxxo\fbd\Services\FootballData;
 
 
-use App\Exceptions\FootballDataException;
+use xxaxxo\fbd\Exceptions\FootballDataException;
 use GuzzleHttp\Client;
 use Illuminate\Support\Collection;
 
