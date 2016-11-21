@@ -29,6 +29,12 @@ class FootballData
         );
     }
 
+    /**
+     * gets a list of the competitions
+     * @param null $year - if an year is setted the year is passed as a param to the api request
+     * @return mixed
+     * @throws FootballDataException
+     */
     public function getCompetitions($year = null)
     {
         $endpoint = 'competitions';
@@ -40,37 +46,66 @@ class FootballData
     }
 
 
+    /**
+     * gets all the fixtures by competition
+     * @param $id int - id of competition
+     * @return Collection
+     * @throws FootballDataException
+     */
     public function getFixturesByCompetition($id)
     {
         $endpoint = 'competitions/'.$id.'/fixtures';
-
-
-
         return $this->returnResponse($this->client->get($endpoint)->getBody()->getContents());
     }
 
-    public function getFixtureData($id)
+    /**
+     * gets all the fixtures info
+     * @param $id int - id of fixture
+     * @param null $matchday int - (if matchday is set it is added to the query
+     * @return Collection
+     * @throws FootballDataException
+     */
+    public function getFixtureData($id, $matchday = NULL)
     {
         $endpoint = 'fixtures/'.$id;
-        //        dd($this->client->get($endpoint)->getBody()->getContents());
+
+        if (!is_null($matchday)) {
+            $endpoint .= '?matchday='.$matchday;
+        }
+
         return $this->returnResponse($this->client->get($endpoint)->getBody()->getContents());
     }
+
+
+
 
 
 
     protected function returnResponse($data)
     {
-        $response = json_decode($data);
+        $response = json_decode($data, true);
         if ($response === null) {
             throw new FootballDataException('Not valid response from API!');
         }
 
-        $response = new Collection($response);
-        if (!is_null($response->get('fixtures'))) {
-            $response->fixtures = new Collection($response->get('fixtures'));
+        return r_collect($response);
+    }
+
+    /**
+     * recursive collection converting
+     * @param $array
+     * @return Collection
+     */
+    function r_collect($array)
+    {
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $value = r_collect($value);
+                $array[$key] = $value;
+            }
         }
 
-        return $response;
+        return new Collection($array);
     }
 
 
