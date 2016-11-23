@@ -49,12 +49,21 @@ class FootballData
     /**
      * gets all the fixtures by competition
      * @param $id int - id of competition
+     * @param null $matchday int - day number of the current competition
+     * @param null $timeFrame string - p1|n1 p(ast)1(number of days from today) n(ext)1(number of days from today)
      * @return Collection
      * @throws FootballDataException
      */
-    public function getFixturesByCompetition($id)
+    public function getFixturesByCompetition($id, $matchday = NULL, $timeFrame = NULL)
     {
         $endpoint = 'competitions/'.$id.'/fixtures';
+
+        if(!is_null($matchday))
+            $endpoint .= '?matchday='.$matchday;
+
+        if(!is_null($timeFrame))
+            $endpoint .= ((is_null($matchday))? '?':'&').'timeFrame='.$timeFrame;
+
         return $this->returnResponse($this->client->get($endpoint)->getBody()->getContents());
     }
 
@@ -75,11 +84,6 @@ class FootballData
 
         return $this->returnResponse($this->client->get($endpoint)->getBody()->getContents());
     }
-
-
-
-
-
 
     protected function returnResponse($data)
     {
