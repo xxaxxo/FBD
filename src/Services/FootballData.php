@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
 class FootballData
 {
     public $client;
+    public $filter = array();
 
     public function __construct()
     {
@@ -31,17 +32,13 @@ class FootballData
 
     /**
      * gets a list of the competitions
-     * @param null $year - if an year is setted the year is passed as a param to the api request
      * @return mixed
      * @throws FootballDataException
      */
-    public function getCompetitions($year = null)
+    public function getCompetitions()
     {
         $endpoint = 'competitions';
-
-        if (!is_null($year)) {
-            $endpoint .= '?year='.$year;
-        }
+        $endpoint = $this->addFiltersToEndpoint($endpoint);
         return $this->returnResponse($this->client->get($endpoint)->getBody()->getContents());
     }
 
@@ -57,30 +54,23 @@ class FootballData
     public function getFixturesByCompetition($id, $matchday = NULL, $timeFrame = NULL)
     {
         $endpoint = 'competitions/'.$id.'/fixtures';
-
-        if(!is_null($matchday))
-            $endpoint .= '?matchday='.$matchday;
-
-        if(!is_null($timeFrame))
-            $endpoint .= ((is_null($matchday))? '?':'&').'timeFrame='.$timeFrame;
-
+        $endpoint = $this->addFiltersToEndpoint($endpoint);
         return $this->returnResponse($this->client->get($endpoint)->getBody()->getContents());
     }
 
     /**
      * gets all the fixtures info
-     * @param $id int - id of fixture
-     * @param null $matchday int - (if matchday is set it is added to the query
+     * @param $id int - id of fixture (when it's passed only the fixture id is returned with all it's head2head history
      * @return Collection
      * @throws FootballDataException
      */
-    public function getFixtureData($id, $matchday = NULL)
+    public function getFixtureData($id = null)
     {
-        $endpoint = 'fixtures/'.$id;
+        $endpoint = 'fixtures/';
+        if(!is_null($id))
+            $endpoint .= $id;
 
-        if (!is_null($matchday)) {
-            $endpoint .= '?matchday='.$matchday;
-        }
+        $endpoint = $this->addFiltersToEndpoint($endpoint);
 
         return $this->returnResponse($this->client->get($endpoint)->getBody()->getContents());
     }
@@ -92,7 +82,7 @@ class FootballData
             throw new FootballDataException('Not valid response from API!');
         }
 
-        return r_collect($response);
+        return $this->recursiveCollection($response);
     }
 
     /**
@@ -100,17 +90,46 @@ class FootballData
      * @param $array
      * @return Collection
      */
-    function r_collect($array)
+    private function recursiveCollection($array)
     {
         foreach ($array as $key => $value) {
             if (is_array($value)) {
-                $value = r_collect($value);
+                $value = $this->recursiveCollection($value);
                 $array[$key] = $value;
             }
         }
 
         return new Collection($array);
     }
+
+    /**
+     * adds filters to a query
+     * @param $name
+     * @param $value
+     * @internal param $filters
+     */
+    public function filter($name, $value)
+    {
+        $this->filter[] = '&'.$name.'='.$value;
+        return $this;
+    }
+
+    /**
+     * adds filters to a endpoint
+     * @param $endpoint
+     */
+    private function addFiltersToEndpoint($endpoint)
+    {
+        if (!empty($this->filter)) {
+            $endpoint .= '?';
+            foreach($this->filter as $filter)
+                $endpoint .= $filter;
+        }
+
+        return $endpoint;
+    }
+
+
 
 
 }
