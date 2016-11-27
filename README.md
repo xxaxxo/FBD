@@ -25,3 +25,11 @@ Add
 use xxaxxo\fbd\Services\FootballData\FootballData;
 ```
 in your controller after getting the package and feed it to the model
+
+
+Added a filter setter now you can use
+```
+$footballData->filter('timeFrame', 'n1')->getFixtureData();
+```
+
+for all the queries that accept filtering params
